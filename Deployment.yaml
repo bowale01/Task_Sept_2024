@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: some-deployment
+  labels:
+    app: some-app
+    role: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: some-app
+  template:
+    metadata:
+      labels:
+        app: some-app
+        role: backend
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.17.8-alpine
+        ports:
+        - containerPort: 80
+          name: http
+        env:
+        - name: APPLICATION_NAME
+          value: "some-app"
+        volumeMounts:
+        - name: www
+          mountPath: /usr/share/nginx/html
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 10  # Liveness probe waits 10 seconds before first check
+          periodSeconds: 10        # Run every 10 seconds
+          timeoutSeconds: 5        # Probe times out after 5 seconds
+          failureThreshold: 6      # Fail after 6 consecutive failures
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 80
+          initialDelaySeconds: 15  # Readiness probe waits 15 seconds before first check
+          periodSeconds: 10        # Run every 10 seconds
+          timeoutSeconds: 5        # Probe times out after 5 seconds
+          failureThreshold: 6      # Fail after 6 consecutive failures
+        resources:
+          limits:
+            memory: "512Mi"        # Limit memory usage to 512Mi
+            cpu: "500m"            # Limit CPU usage to 500 millicores
+          requests:
+            memory: "256Mi"        # Request 256Mi of memory
+            cpu: "250m"            # Request 250 millicores of CPU
+      volumes:
+      - name: www
+        persistentVolumeClaim:
+          claimName: some-claim
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: some-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: my-storage-class
+  resources:
+    requests:
+      storage: 1Gi
