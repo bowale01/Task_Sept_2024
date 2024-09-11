@@ -47,7 +47,7 @@ Assume the execution environment is Kubernetes version 1.17.
 
 
 
-creat a notebook application. Your task is to implement an AWS Lambda function that will perform basic authentication and return the notes of the authenticated user. The notes and authentication data are stored in DynamoDB tables. The Lambda function is later exposed through the API Gateway and serves as an HTTP request handler. The runtime for the Lambda function is Python 3.8.
+create a notebook application. Your task is to implement an AWS Lambda function that will perform basic authentication and return the notes of the authenticated user. The notes and authentication data are stored in DynamoDB tables. The Lambda function is later exposed through the API Gateway and serves as an HTTP request handler. The runtime for the Lambda function is Python 3.8.
 
 Notes:
 The DynamoDB table holding the notes is named user-notes. Each note has the following attributes:
